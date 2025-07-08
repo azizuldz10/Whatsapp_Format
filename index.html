@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Number Formatter - Tool Pembersih Nomor WA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #075E54;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        textarea, input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #25D366;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #20b358;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .output-section {
+            margin-top: 30px;
+        }
+
+        .result-box {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: #075E54;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .examples {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .examples h3 {
+            color: #075E54;
+            margin-bottom: 15px;
+        }
+
+        .example-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #d4edda;
+        }
+
+        .example-item:last-child {
+            border-bottom: none;
+        }
+
+        .arrow {
+            color: #25D366;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 WhatsApp Number Formatter</h1>
+            <p>Tool untuk membersihkan dan memformat nomor WhatsApp Indonesia</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="inputNumbers">Masukkan Nomor WhatsApp (satu per baris):</label>
+                    <textarea 
+                        id="inputNumbers" 
+                        placeholder="Contoh:&#10;+62 813-1751-2977&#10;0813.1751.2977&#10;62 813 1751 2977&#10;+62-813-1751-2977"
+                    ></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="formatNumbers()">🔄 Format Nomor</button>
+                    <button class="btn-secondary" onclick="clearAll()">🗑️ Bersihkan</button>
+                    <button class="btn-secondary" onclick="copyResult()">📋 Copy Hasil</button>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <label for="outputNumbers">Hasil Format (081xxxxxxxxx):</label>
+                <textarea id="outputNumbers" readonly placeholder="Hasil akan muncul di sini..."></textarea>
+                
+                <div class="result-box" id="resultBox" style="display: none;">
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalInput">0</span>
+                            <span>Total Input</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="validNumbers">0</span>
+                            <span>Valid</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="invalidNumbers">0</span>
+                            <span>Invalid</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="examples">
+                <h3>📋 Contoh Format yang Didukung:</h3>
+                <div class="example-item">
+                    <span>+62 813-1751-2977</span>
+                    <span class="arrow">→</span>
+                    <span>081317512977</span>
+                </div>
+                <div class="example-item">
+                    <span>0813.1751.2977</span>
+                    <span class="arrow">→</span>
+                    <span>081317512977</span>
+                </div>
+                <div class="example-item">
+                    <span>62 813 1751 2977</span>
+                    <span class="arrow">→</span>
+                    <span>081317512977</span>
+                </div>
+                <div class="example-item">
+                    <span>+62-813-1751-2977</span>
+                    <span class="arrow">→</span>
+                    <span>081317512977</span>
+                </div>
+                <div class="example-item">
+                    <span>62813-1751-2977</span>
+                    <span class="arrow">→</span>
+                    <span>081317512977</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatNumbers() {
+            const input = document.getElementById('inputNumbers').value;
+            const lines = input.split('\n').filter(line => line.trim() !== '');
+            
+            let validCount = 0;
+            let invalidCount = 0;
+            const formattedNumbers = [];
+            
+            lines.forEach(line => {
+                const formatted = formatSingleNumber(line.trim());
+                if (formatted) {
+                    formattedNumbers.push(formatted);
+                    validCount++;
+                } else {
+                    invalidCount++;
+                }
+            });
+            
+            // Update output
+            document.getElementById('outputNumbers').value = formattedNumbers.join('\n');
+            
+            // Update stats
+            document.getElementById('totalInput').textContent = lines.length;
+            document.getElementById('validNumbers').textContent = validCount;
+            document.getElementById('invalidNumbers').textContent = invalidCount;
+            
+            // Show result box
+            document.getElementById('resultBox').style.display = 'block';
+        }
+        
+        function formatSingleNumber(number) {
+            // Remove all non-digit characters
+            let cleaned = number.replace(/\D/g, '');
+            
+            // Handle different formats
+            if (cleaned.startsWith('62')) {
+                // Remove country code 62 and add 0
+                cleaned = '0' + cleaned.substring(2);
+            } else if (cleaned.startsWith('0')) {
+                // Already starts with 0, keep as is
+            } else if (cleaned.length >= 9) {
+                // Assume it's missing the leading 0
+                cleaned = '0' + cleaned;
+            } else {
+                // Invalid format
+                return null;
+            }
+            
+            // Validate Indonesian mobile number format
+            if (cleaned.length >= 10 && cleaned.length <= 13 && 
+                cleaned.startsWith('08') && 
+                /^08[1-9][0-9]{7,10}$/.test(cleaned)) {
+                return cleaned;
+            }
+            
+            return null;
+        }
+        
+        function clearAll() {
+            document.getElementById('inputNumbers').value = '';
+            document.getElementById('outputNumbers').value = '';
+            document.getElementById('resultBox').style.display = 'none';
+        }
+        
+        function copyResult() {
+            const output = document.getElementById('outputNumbers');
+            if (output.value.trim() === '') {
+                alert('Tidak ada hasil untuk di-copy. Silakan format nomor terlebih dahulu.');
+                return;
+            }
+            
+            output.select();
+            document.execCommand('copy');
+            
+            // Show feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = '✅ Copied!';
+            button.style.background = '#28a745';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = '';
+            }, 2000);
+        }
+        
+        // Add sample data for demo
+        document.addEventListener('DOMContentLoaded', function() {
+            const sampleData = `+62 813-1751-2977
+0813.1751.2977
+62 813 1751 2977
++62-821-1234-5678
+0856 1234 5678`;
+            
+            document.getElementById('inputNumbers').value = sampleData;
+        });
+    </script>
+</body>
+</html>
